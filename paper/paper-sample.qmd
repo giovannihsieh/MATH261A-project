@@ -1,0 +1,121 @@
+---
+title: "Title"
+subtitle: "Subtitle"
+author: "Your Name"
+thanks: "Project repository available at: [https://github.com/peteragao/MATH261A-project-template](https://github.com/peteragao/MATH261A-project-template)."
+date: today
+date-format: long
+abstract: "Abstract here."
+format: pdf
+bibliography: references.bib
+number-sections: true
+---
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+# load libraries
+library(tidyverse)
+library(palmerpenguins)
+library(ggpubr)
+library(patchwork)
+```
+
+# Introduction
+
+What is my big question?
+
+You should care about the answer to this question because...
+
+We expect that...
+
+
+@sec-data introduces the data used in this analysis... @sec-methods describes the model... 
+
+
+# Data {#sec-data}
+
+```{r fig-adelie-scatter}
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: "Scatter plot of flipper length, in mm (x-axis) and body mass in grams (y-axis) with fitted linear regression model."
+data(penguins)
+adelie <- penguins |>
+  filter(species == "Adelie" & sex == "female")
+ggplot(adelie, aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  # helpful function for adding linear regression line below
+  geom_smooth(method = "lm", se  = FALSE) +
+  # helpful function from ggpubr package for labeling line below
+  stat_regline_equation(label.x = 197, label.y = 3400) +
+  theme_pubr() +
+  ylab("Body mass (grams)") +
+  xlab("Flipper length (mm)") +
+  ggtitle("Comparison of flipper length and body mass\nfor female Adelie penguins")
+```
+
+The `palmerpenguins` package [@palmer_penguins] provides data on three species of penguins observed in the Palmer Archipelago near Palmer Station, Antarctica. These data were collected and shared by Dr. Kristen Gorman and the Palmer Station Long Term Ecological Research program in 2014. Each row describes a single penguin and includes information about its sex, species, and various body measurements. My analysis focuses on the `r nrow(adelie)` female Adelie penguins in the dataset.
+
+@fig-adelie-scatter indicates a weak positive linear association between flipper length and body mass...
+
+# Methods {#sec-methods}
+
+I fit the simple linear regression model...
+
+$$Y_i = \beta_0 +\beta_1 X_i + \varepsilon_i$$
+
+
+In this model, $\beta_1$ represents...
+
+I implemented this analysis using the R programming language [@R_language]...
+
+
+# Results {#sec-results}
+
+```{r adelie-lm}
+#| echo: false
+#| warning: false
+#| message: false
+lm_fit <- lm(body_mass_g ~ flipper_length_mm, data = adelie)
+```
+
+The estimated slope parameter is $b_1=$ `r round(coefficients(lm_fit)[2], 3)`. In other words, for each millimeter increase in flipper length, the expected change in...
+
+The estimated intercept is ....
+
+
+
+
+```{r fig-adelie-residual}
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: "Scatter plot of fitted values (x-axis) and residuals (y-axis) for a simple linear regression with body mass (g) as the response and flipper length (mm) as the predictor."
+plot_dat <- data.frame(
+  resid = resid(lm_fit),
+  fitted = fitted(lm_fit)
+)
+ggplot(plot_dat, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  theme_pubr() +
+  ylab("Residual (observed - fitted)") +
+  xlab("Fitted value") +
+  ggtitle("Residuals vs. fitted value plot")
+```
+
+I use a two-sided t-test to compare the null hypothesis $\beta_1=0$ with the two-sided alternative hypothesis $\beta_1\not=0$. In order for this test to be valid, we require that... @fig-adelie-scatter indicates that these assumptions are...
+
+
+# Discussion {#sec-discussion}
+
+How does this analysis answer my big question?
+
+What are some of the strengths and weaknesses of my analysis?
+
+What would I do next? What data do I want to collect? What other questions could I explore?
+
+
+# References
