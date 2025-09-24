@@ -39,7 +39,7 @@ library(patchwork)
 # read in nfl data
 nfl_data <- read_csv("../data/nfl-team-statistics.csv")
 
-# calculate offense and defense strength
+# calculate offense play balance by ratio
 nfl_data <- nfl_data |>
   mutate(
     offense_balance = offense_n_plays_run / offense_n_plays_pass
@@ -52,24 +52,24 @@ ggplot(nfl_data, aes(x = offense_balance, y = score_differential)) +
   stat_regline_equation(label.x = 1.25, label.y = 300) +
   theme_pubr() +
   ylab("Score Differential") +
-  xlab("Pass-to-Run Play Ratio") +
-  ggtitle("Relationship Between Offensive Play Balance\nand Total Wins")
+  xlab("Pass to Run Play Ratio") +
+  ggtitle("Relationship Between Offensive Play Balance\nand Score Differential")
 ```
 
 The `nfl-team-statistics` dataset [@palmer_penguins] provides data about the regular season performance for each NFL team from 1999 to 2022. Each row in the dataset corresponds to a single NFL team in a single regular season and includes information about wins, losses, score differential, and various offensive and defensive metrics. My analysis focuses on the offense play balance represented by the ratio between the number of run plays and pass plays a team ran in a given season.
 
-@fig-offense-balance-scatter indicates a weak positive linear association between offense play balance and score differential...
+@fig-offense-balance-scatter indicates a weak positive linear association between offense play balance and score differential.
 
 # Methods {#sec-methods}
 
-I fit the simple linear regression model...
+I fit the simple linear regression model.
 
 $$Y_i = \beta_0 +\beta_1 X_i + \varepsilon_i$$
 
 
 In this model, $\beta_1$ represents...
 
-I implemented this analysis using the R programming language [@R_language]...
+I implemented this analysis using the R programming language [@R_language] using the lm_fit function. The plots were done using the ggplot function.
 
 
 # Results {#sec-results}
