@@ -1,8 +1,8 @@
 ---
-title: "Title"
-subtitle: "Subtitle"
-author: "Your Name"
-thanks: "Project repository available at: [https://github.com/peteragao/MATH261A-project-template](https://github.com/peteragao/MATH261A-project-template)."
+title: "NFL Offensive Play Balance Importance for Wins"
+subtitle: "Data from 1999-2022"
+author: "Giovanni Hsieh"
+thanks: "Project repository available at: [https://github.com/giovannihsieh/MATH261A-project](https://github.com/giovannihsieh/MATH261A-project)."
 date: today
 date-format: long
 abstract: "Abstract here."
@@ -24,41 +24,41 @@ library(patchwork)
 
 # Introduction
 
-What is my big question?
-
-You should care about the answer to this question because...
-
-We expect that...
-
-
-@sec-data introduces the data used in this analysis... @sec-methods describes the model... 
-
+  I wanted to look at the question of whether having a balanced offense between both passing and rushing is important for winning games. As the NFL has become more and more pass heavy in pursuit of higher entertainment value and higher profits, I wanted to see if relying on a pass heavy offense is a viable strategy in the NFL.
+  The answer to this question could have many implications. If pass heavy offenses are the future of the NFL, positions that are more important for passing (QB, WR, LT) may become more desirable and more of a focus for teams in the draft and offseason. Positions that are more traditionally involved in the run offense (RB, OG) may see lower salaries and draft priority.
+  We expect that there should be a positive correlation between offense balance and score differential because having a balanced offense makes a team's offense less predictable for the defense. This would increase the chance for a team to generate offensive success if the defense has to prepare for both a passing and rushing offense.
+  @sec-data introduces the data used in this analysis. @sec-methods describes the model used. @sec-results discusses the analysis of the results and conclusions that can be drawn. @sec-discussion discusses potential strengths and weaknesses of the analysis, and some future steps.
 
 # Data {#sec-data}
-
-```{r fig-adelie-scatter}
+```{r fig-offense-balance-scatter}
 #| echo: false
 #| warning: false
 #| message: false
-#| fig-cap: "Scatter plot of flipper length, in mm (x-axis) and body mass in grams (y-axis) with fitted linear regression model."
-data(penguins)
-adelie <- penguins |>
-  filter(species == "Adelie" & sex == "female")
-ggplot(adelie, aes(x = flipper_length_mm, y = body_mass_g)) +
+#| fig-cap: "Scatter plot of pass/run play ratio (x-axis) and total wins (y-axis) with fitted linear regression model."
+
+# read in nfl data
+nfl_data <- read_csv("../data/nfl-team-statistics.csv")
+
+# calculate offense and defense strength
+nfl_data <- nfl_data |>
+  mutate(
+    offense_balance = offense_n_plays_run / offense_n_plays_pass
+  )
+
+# plot
+ggplot(nfl_data, aes(x = offense_balance, y = score_differential)) +
   geom_point() +
-  # helpful function for adding linear regression line below
-  geom_smooth(method = "lm", se  = FALSE) +
-  # helpful function from ggpubr package for labeling line below
-  stat_regline_equation(label.x = 197, label.y = 3400) +
+  geom_smooth(method = "lm", se = FALSE) +
+  stat_regline_equation(label.x = 1.25, label.y = 300) +
   theme_pubr() +
-  ylab("Body mass (grams)") +
-  xlab("Flipper length (mm)") +
-  ggtitle("Comparison of flipper length and body mass\nfor female Adelie penguins")
+  ylab("Score Differential") +
+  xlab("Pass-to-Run Play Ratio") +
+  ggtitle("Relationship Between Offensive Play Balance\nand Total Wins")
 ```
 
-The `palmerpenguins` package [@palmer_penguins] provides data on three species of penguins observed in the Palmer Archipelago near Palmer Station, Antarctica. These data were collected and shared by Dr. Kristen Gorman and the Palmer Station Long Term Ecological Research program in 2014. Each row describes a single penguin and includes information about its sex, species, and various body measurements. My analysis focuses on the `r nrow(adelie)` female Adelie penguins in the dataset.
+The `nfl-team-statistics` dataset [@palmer_penguins] provides data about the regular season performance for each NFL team from 1999 to 2022. Each row in the dataset corresponds to a single NFL team in a single regular season and includes information about wins, losses, score differential, and various offensive and defensive metrics. My analysis focuses on the offense play balance represented by the ratio between the number of run plays and pass plays a team ran in a given season.
 
-@fig-adelie-scatter indicates a weak positive linear association between flipper length and body mass...
+@fig-offense-balance-scatter indicates a weak positive linear association between offense play balance and score differential...
 
 # Methods {#sec-methods}
 
@@ -73,12 +73,11 @@ I implemented this analysis using the R programming language [@R_language]...
 
 
 # Results {#sec-results}
-
-```{r adelie-lm}
+```{r offense-balance-lm}
 #| echo: false
 #| warning: false
 #| message: false
-lm_fit <- lm(body_mass_g ~ flipper_length_mm, data = adelie)
+lm_fit <- lm(offense_balance ~ score_differential, data = nfl_data)
 ```
 
 The estimated slope parameter is $b_1=$ `r round(coefficients(lm_fit)[2], 3)`. In other words, for each millimeter increase in flipper length, the expected change in...
@@ -88,7 +87,7 @@ The estimated intercept is ....
 
 
 
-```{r fig-adelie-residual}
+```{r fig-offense-balance-residual}
 #| echo: false
 #| warning: false
 #| message: false
