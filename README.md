@@ -1,5 +1,4 @@
 # MATH261A-project
-Project repository for MATH 261A.
 Author: Giovanni Hsieh
 Date of Submission: 9/24/2025
 
@@ -10,11 +9,7 @@ Final PDF is in the paper folder, and Quarto qmd file used to render the PDF is 
 
 ## Data 
 
-**Example statement:** Data used in this project is obtained from [San Francisco Open Data](https://data.sfgov.org) who provide the data under the [Open Data Commons Public Domain Dedication and License](https://opendatacommons.org/licenses/pddl/1-0/).
-
-## External Resources
-
-**Example statement:** The final report and code were written by Giovanni Hsieh.
+Data used in this project is obtained from [SCORE Sports Data Repository](https://data.scorenetwork.org) who provide the data with funding by the National Science Foundation (award 2142705).
 
 # Acknowledgments
 
