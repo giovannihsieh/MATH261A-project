@@ -1,11 +1,11 @@
 ---
-title: "NFL Offensive Play Balance Importance for Wins"
-subtitle: "Data from 1999-2022"
+title: "NFL Offensive Play Balance and Score Differential"
+subtitle: "Analysis of NFL Team Data from 1999-2022"
 author: "Giovanni Hsieh"
 thanks: "Project repository available at: [https://github.com/giovannihsieh/MATH261A-project](https://github.com/giovannihsieh/MATH261A-project)."
 date: today
 date-format: long
-abstract: "Abstract here."
+abstract: "This study examines the relationship between offensive play balance and team score differential in the NFL using data from 1999-2022. Offensive play balance was calculated as the ratio of run plays to pass plays, with higher values representing a more balanced offense. A simple linear regression model was fitted with score differential as the response variable and offensive play balance as the predictor variable. Residual plots were used to assess the assumptions of linearity, independence, normality, and constant variance of residuals. The results show a statistically significant positive association between offensive play balance and score differential, suggesting that teams with a more balanced offense tend to have a better score differential. This implies higher team strength and more wins. Some limitations include only using a single predictor for the model, error independence assumption concerns, and the fact that the measure of offensive play balance used does not account for play quality and efficiency. Future work includes performing this analysis with multiple predictors such as defensive statistics, exploring offensive play balance trends over time, and looking at factors affecting playoff success specifically. These results may help NFL teams optimize offensive playcalls and resource allocation for the draft and offseason priorities."
 format: pdf
 bibliography: references.bib
 number-sections: true
@@ -20,21 +20,22 @@ library(tidyverse)
 library(palmerpenguins)
 library(ggpubr)
 library(patchwork)
+library(nflreadr)
 ```
 
 # Introduction
 
-  I wanted to look at the question of whether having a balanced offense between both passing and rushing is important for winning games. As the NFL has become more and more pass heavy in pursuit of higher entertainment value and higher profits, I wanted to see if relying on a pass heavy offense is a viable strategy in the NFL.
-  The answer to this question could have many implications. If pass heavy offenses are the future of the NFL, positions that are more important for passing (QB, WR, LT) may become more desirable and more of a focus for teams in the draft and offseason. Positions that are more traditionally involved in the run offense (RB, OG) may see lower salaries and draft priority.
-  We expect that there should be a positive correlation between offense balance and score differential because having a balanced offense makes a team's offense less predictable for the defense. This would increase the chance for a team to generate offensive success if the defense has to prepare for both a passing and rushing offense.
-  @sec-data introduces the data used in this analysis. @sec-methods describes the model used. @sec-results discusses the analysis of the results and conclusions that can be drawn. @sec-discussion discusses potential strengths and weaknesses of the analysis, and some future steps.
+I wanted to look at the question of whether having a balanced offense between both passing and rushing is important for winning games. As the NFL has become more and more pass heavy in pursuit of higher entertainment value and higher profits, I wanted to see if relying on a pass heavy offense is a viable strategy in the NFL. The answer to this question could have many implications. If pass heavy offenses are the future of the NFL, positions that are more important for passing (QB, WR, LT) may become more desirable and more of a focus for teams in the draft and offseason. Positions that are more traditionally involved in the run offense (RB, OG) may see lower salaries and draft priority. We expect that there should be a positive correlation between offense balance and score differential because having a balanced offense makes a team's offense less predictable for the defense. This would increase the chance for a team to generate offensive success if the defense has to prepare for both a passing and rushing offense. The findings can help NFL team management decide where to put draft and free agency resources for future seasons. @sec-data introduces the data used in this analysis. @sec-methods describes the model used. @sec-results discusses the analysis of the results and conclusions that can be drawn. @sec-discussion discusses potential strengths and weaknesses of the analysis, and some future steps.
 
 # Data {#sec-data}
+The `nfl-team-statistics` dataset [@nfl_data] provides data about the regular season performance for each NFL team from 1999 to 2022. Each row in the dataset corresponds to a single NFL team in a single regular season and includes information about wins, losses, score differential, and various offensive and defensive metrics. My analysis focuses on the offense play balance represented by the ratio between the number of run plays and pass plays a team ran in a given season. Therefore, teams with a pass heavy offense would have an offensive play balance ratio below 1.0 and teams with a balanced offense would have an offensive play balance ratio above 1.0.
+
 ```{r fig-offense-balance-scatter}
 #| echo: false
 #| warning: false
 #| message: false
-#| fig-cap: "Scatter plot of pass/run play ratio (x-axis) and total wins (y-axis) with fitted linear regression model."
+#| fig-cap: "Scatter plot of run/pass play ratio (x-axis) and score differential (y-axis) with fitted linear regression model."
+#| fig-pos: "H"
 
 # read in nfl data
 nfl_data <- read_csv("../data/nfl-team-statistics.csv")
@@ -52,13 +53,10 @@ ggplot(nfl_data, aes(x = offense_balance, y = score_differential)) +
   stat_regline_equation(label.x = 1.25, label.y = 300) +
   theme_pubr() +
   ylab("Score Differential") +
-  xlab("Pass to Run Play Ratio") +
+  xlab("Run to Pass Play Ratio") +
   ggtitle("Relationship Between Offensive Play Balance\nand Score Differential")
 ```
-
-The `nfl-team-statistics` dataset [@palmer_penguins] provides data about the regular season performance for each NFL team from 1999 to 2022. Each row in the dataset corresponds to a single NFL team in a single regular season and includes information about wins, losses, score differential, and various offensive and defensive metrics. My analysis focuses on the offense play balance represented by the ratio between the number of run plays and pass plays a team ran in a given season.
-
-@fig-offense-balance-scatter indicates a weak positive linear association between offense play balance and score differential.
+@fig-offense-balance-scatter indicates a positive linear association between offense play balance and score differential.
 
 # Methods {#sec-methods}
 
@@ -66,32 +64,41 @@ I fit the simple linear regression model.
 
 $$Y_i = \beta_0 +\beta_1 X_i + \varepsilon_i$$
 
+In this model, $Y_i$ represents the score differential of a team in a given season. $X_i$ represents the offense balance ratio calculated by the number of run plays divided by the number of pass plays a team ran in a given season. $\beta_1$ represents the slope, or the expected score differential change when the offense balance ratio increases by 1. $\beta_0$ represents the intercept, or the expected score differential when the offense balance ratio is 0 (pass only offense with 0 run plays the whole season). $\varepsilon_i$ represents the error terms, or the variation in score differential that is not explained by the model.
 
-In this model, $\beta_1$ represents...
+Some assumptions include linearity, independent errors, normality of errors, and constant error variance. I looked at the residual vs predictor plot, residual vs time plot, and a quantile-quantile plot to help validate these assumptions. For linearity, the residual plot should look evenly spread around the residual = 0 line, with no clear patterns. Independent errors would have no clear patterns in the residual vs time plot. Normality of errors would have points on the quantile-quantile plot along the reference line. Constant error variance would have a residual vs predictor plot that is evenly spread rather than having a cone like shape.
+
+One limitation of this analysis is that the model uses a single predictor $\beta_1$. The model is only looking at offense balance as a predictor without considering other factors that could affect the score differential such as defense strength and turnovers. Another limitation is for independence. Since the data contains the same team over multiple seasons, those points are not independent. A team's performance in one season affects how they will perform in the next season. One last potential limitation is the measurement of offensive balance is calculated with the number of plays and not play quality. This means the ratio is not taking into account how many yards are gained and the efficiency of each play.
+
+I performed a two-sided t-test on the slop coefficient $\beta_1$ of the linear regression model used above. The hypotheses for the test are:
+
+$$H_0: \beta_1 = 0$$
+$$H_A: \beta_1 \neq 0$$
+The t-test statistic is calculated as follows:
+$$ t = \frac{\hat{\beta}_1}{SE(\hat{\beta}_1)}$$
+$\hat{\beta}_1$ is the estimated slope, and $SE(\hat{\beta}_1)$ is its standard error.
+
+The test statistic $t$ and p-value $p$ gives us a calculation of how likely it is for us to observe the estimated slope in the model if the true slope was 0. The t-test has the same assumptions as the simple linear regression model.
 
 I implemented this analysis using the R programming language [@R_language] using the lm_fit function. The plots were done using the ggplot function.
-
 
 # Results {#sec-results}
 ```{r offense-balance-lm}
 #| echo: false
 #| warning: false
 #| message: false
-lm_fit <- lm(offense_balance ~ score_differential, data = nfl_data)
+lm_fit <- lm(score_differential ~ offense_balance, data = nfl_data)
 ```
+The estimated slope parameter is $b_1=$ `r round(coefficients(lm_fit)[2], 3)`. In other words, for each one unit increase in offense play balance ratio, the expected change in score differential is `r round(coefficients(lm_fit)[2], 3)`.
 
-The estimated slope parameter is $b_1=$ `r round(coefficients(lm_fit)[2], 3)`. In other words, for each millimeter increase in flipper length, the expected change in...
-
-The estimated intercept is ....
-
-
-
+The estimated intercept is $b_0=$ `r round(coefficients(lm_fit)[1], 3)`. In other words, the predicted score differential of a team with an offense balance ratio of 0. This technically means a team that only does pass plays and never runs the ball, which is not useful in this analysis.
 
 ```{r fig-offense-balance-residual}
 #| echo: false
 #| warning: false
 #| message: false
-#| fig-cap: "Scatter plot of fitted values (x-axis) and residuals (y-axis) for a simple linear regression with body mass (g) as the response and flipper length (mm) as the predictor."
+#| fig-cap: "Scatter plot of fitted values (x-axis) and residuals (y-axis) for a simple linear regression with score differential as the response and offense play balance as the predictor."
+#| fig-pos: "H"
 plot_dat <- data.frame(
   resid = resid(lm_fit),
   fitted = fitted(lm_fit)
@@ -104,17 +111,65 @@ ggplot(plot_dat, aes(x = fitted, y = resid)) +
   xlab("Fitted value") +
   ggtitle("Residuals vs. fitted value plot")
 ```
+@fig-offense-balance-residual shows the residuals vs. fitted value plot. The errors seem to be spread out relatively evenly, validating the linearity assumption. There also looks to be constant error variance due to an even spread without a clear cone shape in the residuals.
+```{r fig-offense-balance-qqplot}
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: "Q-Q plot of residuals from a simple linear regression with score differential as the response and offense play balance as the predictor."
+#| fig-pos: "H"
+plot_dat <- data.frame(resid = resid(lm_fit))
 
-I use a two-sided t-test to compare the null hypothesis $\beta_1=0$ with the two-sided alternative hypothesis $\beta_1\not=0$. In order for this test to be valid, we require that... @fig-adelie-scatter indicates that these assumptions are...
+ggplot(plot_dat, aes(sample = resid)) +
+  stat_qq() +
+  stat_qq_line(color = "red") +
+  theme_pubr() +
+  ylab("Sample Quantiles") +
+  xlab("Theoretical Quantiles") +
+  ggtitle("Q-Q Plot of Residuals")
+```
+@fig-offense-balance-qqplot shows the quantile-quantile plot. The erros seem to be normal, as the residuals lie close to the reference line shown in red.
+```{r fig-offense-balance-time}
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: "Residuals plotted against year (time) for the offense balance regression model."
+#| fig-pos: "H"
+plot_dat <- data.frame(
+  resid = resid(lm_fit),
+  year = nfl_data$season
+)
 
+ggplot(plot_dat, aes(x = year, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  theme_pubr() +
+  ylab("Residual (observed - fitted)") +
+  xlab("Year") +
+  ggtitle("Residuals vs. Time (Year)")
+```
+@fig-offense-balance-time shows the residuals vs. time plot. The residuals look relatively evenly distributed, although there does seem to be some up and down movement throughout the years. There might be a potential concern for the independence assumption in the model.
+```{r offense-balance-test}
+#| echo: false
+#| warning: false
+#| message: false
+# get summary of lm
+summary <- summary(lm_fit)
+
+# get t-value and p-value
+t_value <- summary$coefficients["offense_balance", "t value"]
+p_value <- summary$coefficients["offense_balance", "Pr(>|t|)"]
+```
+I use a two-sided t-test to compare the null hypothesis $\beta_1=0$ with the two-sided alternative hypothesis $\beta_1\not=0$. In order for this test to be valid, we require that the relationship between offense balance and score differential is linear, there is constant variance, errors are normally distributed, and independence of error terms. The independence assumption is questionable because of the same team over different seasons (Niners in 2011 vs Niners in 2012 are probably not independent).
+
+The test statistic is $t=$ `r round(summary(lm_fit)$coefficients["offense_balance", "t value"], 3)`. The p-value is $p=$ `r signif(summary(lm_fit)$coefficients["offense_balance", "Pr(>|t|)"], 3)`. The test statistic means that the estimated slope is many standard errors away from 0, and the p-value means that there is an extremely small chance of observing this slope estimate if the true slope were actually 0. Because of the very large t-value and extremely small p-value, the test indicates that offense balance ratio is statistically significantly associated with score differential.
 
 # Discussion {#sec-discussion}
 
-How does this analysis answer my big question?
+Overall, there does seem to be a postive linear association between offense play balance and score differential. Therefore, having a more diverse playbook and a balance between passing and rushing plays is associated with having a better score differential and therefore more wins in the NFL. This means that NFL teams should continue to invest resources into both the passing and rushing game rather than just focusing on the passing game.
 
-What are some of the strengths and weaknesses of my analysis?
+Some limitations of the model include using only a single predictor (offense play balance), error independence assumptions, and measurement of the offense play balance. Having multiple predictors like defense for predicting score differential would result in a model that better explains what is driving differences in score differential. Team independence across seasons is also a concern, since a bad team in one season is probably also a bad team in the next season. Having poor performance from players could also be a bigger factor in score differential rather than offensive play selection. Furthermore, the measurement of offense play balance used in this model was a simple ratio of the number of pass and run plays. The model does not factor play quality like yards gained and efficiency, two factors which might help make the model more robust. Lastly, the regression model used does not imply causality. One big potential factor is that strong teams tend to have score leads, which incentivizes them to run the ball more to drain the clock. This is because running the ball is safer (fumbles are less likely than interceptions), and running the ball does not stop the clock compared to incompletions from passing.
 
-What would I do next? What data do I want to collect? What other questions could I explore?
-
+Some future steps could be a multiple linear regression using both offensive stats and defensive stats to predict score differential. This model would let us see which variables are affecting score differential the most. Another potential question would be how NFL offenses are evolving over time. The media has suggested that over time, the NFL has become a more pass focused league as passing offenses tend to have more explosive plays and are more entertaining to watch for fans. Checking for trends over time could verify if that is actually the case. For data collection, I think an important statistic is how well teams do in the playoffs and ultimately, which team wins the Superbowl. There have always been teams that perform well in the regular season but lose out in the playoffs, and looking at what statistics increase a team's chances of winning in the playoffs and the Superbowl would be valuable information for NFL teams.
 
 # References
