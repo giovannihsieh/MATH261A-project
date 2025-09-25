@@ -17,7 +17,6 @@ number-sections: true
 #| message: false
 # load libraries
 library(tidyverse)
-library(palmerpenguins)
 library(ggpubr)
 library(patchwork)
 library(nflreadr)
