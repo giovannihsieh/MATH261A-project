@@ -132,7 +132,7 @@ ggplot(plot_dat, aes(sample = resid)) +
 #| echo: false
 #| warning: false
 #| message: false
-#| fig-cap: "Residuals plotted against year (time) for the offense balance regression model."
+#| fig-cap: "Residuals plotted against year (time) for the offense play balance regression model."
 #| fig-pos: "H"
 plot_dat <- data.frame(
   resid = resid(lm_fit),
