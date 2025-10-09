@@ -1,6 +1,8 @@
 # MATH261A-project
-Author: Giovanni Hsieh
-Date of Submission: 9/24/2025
+Author: Giovanni Hsieh  
+Date of Submission:  
+First Draft: 9/24/2025  
+Second Draft: 10/8/25  
 
 ## Project Structure
 
@@ -10,6 +12,9 @@ Final PDF is in the paper folder, and Quarto qmd file used to render the PDF is 
 ## Data 
 
 Data used in this project is obtained from [SCORE Sports Data Repository](https://data.scorenetwork.org) who provide the data with funding by the National Science Foundation (award 2142705).
+
+## External Resources
+No external resources (including LLMs) were used for the project.
 
 # Acknowledgments
 
