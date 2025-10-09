@@ -11,6 +11,9 @@ Final PDF is in the paper folder, and Quarto qmd file used to render the PDF is 
 
 Data used in this project is obtained from [SCORE Sports Data Repository](https://data.scorenetwork.org) who provide the data with funding by the National Science Foundation (award 2142705).
 
+## External Resources
+No external resources (including LLMs) were used for the project.
+
 # Acknowledgments
 
 This project repository is based on the template provided by [Rohan Alexander](https://github.com/RohanAlexander/starter_folder/tree/main).
