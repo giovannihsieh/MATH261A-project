@@ -1,6 +1,6 @@
 ---
-title: "NFL Offensive Play Balance and Score Differential"
-subtitle: "Analysis of NFL Team Data from 1999-2022"
+title: "Analyzing the Relationship Between Offensive Play Balance and Score Differential in the NFL(1999-2022)"
+subtitle: "An Analysis Using Simple Linear Regression"
 author: "Giovanni Hsieh"
 thanks: "Project repository available at: [https://github.com/giovannihsieh/MATH261A-project](https://github.com/giovannihsieh/MATH261A-project)."
 date: today
