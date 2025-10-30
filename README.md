@@ -1,8 +1,9 @@
 # MATH261A-project
 Author: Giovanni Hsieh  
 Date of Submission:  
-First Draft: 9/24/2025  
-Second Draft: 10/8/25  
+First Draft: 9/24/25  
+Second Draft: 10/8/25
+Final Draft: 10/29/25
 
 ## Project Structure
 
